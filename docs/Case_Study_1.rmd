@@ -1,0 +1,581 @@
+---
+title: "Case_Study: Cyclistic Study"
+author: "Lim Dao Yuan"
+date: "2022-09-26"
+output: 
+  html_document:
+    fig_caption: false
+    theme: paper
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+
+
+    
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,results = "hide")
+```
+
+```{css, echo=FALSE}
+p{
+  font-size: 16px;
+  text-align: justify;
+}
+.table{
+  text-align: justify;
+  font-size: 16px;
+}
+caption{
+  font-size: 16px;
+  color: black;
+}
+```
+
+# **Case Study: How Does a Bike-Share Navigate Speedy Success?** {.tabset}
+
+## **Task Details** {#taskdetail}
+
+### **Scenario** {#scenario}
+
+You are a junior data analyst working in the marketing analyst team at
+Cyclistic, a bike-share company in Chicago. The director of marketing
+believes the company's future success depends on maximizing the number
+of annual memberships. Therefore, your team wants to understand how
+casual riders and annual members use Cyclistic bikes differently. From
+these insights, your team will design a new marketing strategy to
+convert casual riders into annual members. But first, Cyclistic
+executives must approve your recommendations, so they must be backed up
+with compelling data insights and professional data visualizations.
+
+### **About The Company**
+
+In 2016, Cyclistic launched a successful bike-share offering. Since
+then, the program has grown to a fleet of 5,824 bicycles that are
+geotracked and locked into a network of 692 stations across Chicago. The
+bikes can be unlocked from one station and returned to any other station
+in the system anytime. Until now, Cyclistic's marketing strategy relied
+on building general awareness and appealing to broad consumer segments.
+
+One approach that helped make these things possible was the flexibility
+of its pricing plans: single-ride passes, full-day passes, and annual
+memberships. Customers who purchase single-ride or full-day passes are
+referred to as casual riders. Customers who purchase annual memberships
+are Cyclistic members. Cyclistic's finance analysts have concluded that
+annual members are much more profitable than casual riders. Although the
+pricing flexibility helps Cyclistic attract more customers, Moreno
+believes that maximizing the number of annual members will be key to
+future growth.
+
+Rather than creating a marketing campaign that targets all-new
+customers, Moreno believes there is a very good chance to convert casual
+riders into members. She notes that casual riders are already aware of
+the Cyclistic program and have chosen Cyclistic for their mobility
+needs.
+
+Moreno has set a clear goal: Design marketing strategies aimed at
+converting casual riders into annual members. In order to do that,
+however, the marketing analyst team needs to better understand how
+annual members and casual riders differ, why casual riders would buy a
+membership, and how digital media could affect their marketing tactics.
+Moreno and her team are interested in analyzing the Cyclistic historical
+bike trip data to identify trends.
+
+### **Pricing**
+
+| Passes             | Price                                                     |
+|-------------------|-----------------------------------------------------|
+| Single-Ride Pass   | \$1 + \$0.16 / minute                                     |
+| Full-Day Pass      | \$15 + \$0.16 / minute after 3 hours                      |
+| Annual Memberships | \$119 annually + \$0.16 / minute after 45 minutes per day |
+| E-Bike             | \$1 + \$0.39 / minute or \$0.16 / minute for members      |
+
+### Riding Areas
+
+![Riding Zone](CHI-E-Bike-Zone-Map.png)
+
+### **Business Task**
+
+Identify the distinctive behavior between casual riders and annual
+members.
+
+### **Expected Outcome**
+
+At the end of this report, the analyzed information is expected to
+assist the company to achieve their goal, and that is to convert
+potential users, casual riders into annual members and consequently
+increasing the profitability from the already existing pricing plans.
+
+### **Involved Stakeholders**
+
+-   **Cyclistic**: A bike-share program that features more than 5,800
+    bicycles and 600 docking stations. Cyclistic sets itself apart by
+    also offering reclining bikes, hand tricycles, and cargo bikes,
+    making bike-share more inclusive to people with disabilities and
+    riders who can't use a standard two-wheeled bike. The majority of
+    riders opt for traditional bikes; about 8% of riders use the
+    assistive options. Cyclistic users are more likely to ride for
+    leisure, but about 30% use them to commute to work each day.
+
+-   **Lily Moreno**: The director of marketing and your manager. Moreno
+    is responsible for the development of campaigns and initiatives to
+    promote the bike-share program. These may include email, social
+    media, and other channels.
+
+-   **Cyclistic marketing analytics team**: A team of data analysts who
+    are responsible for collecting, analyzing, and reporting data that
+    helps guide Cyclistic marketing strategy. You joined this team six
+    months ago and have been busy learning about Cyclistic's mission and
+    business goals --- as well as how you, as a junior data analyst, can
+    help Cyclistic achieve them.
+
+-   **Cyclistic executive team**: The notoriously detail-oriented
+    executive team will decide whether to approve the recommended
+    marketing program.
+
+## **Data Description**
+
+### **Clarification**
+
+The datasets used in this case study are obtained from the DIVVY bicycle
+sharing service that is located in Chicago, United States. It was made
+available by Motivate International Inc. under this
+[license](https://ride.divvybikes.com/data-license-agreement). The
+datasets has a different name since Cyclistic is a fictional company.
+The datasets can be downloaded from [this
+link](https://divvy-tripdata.s3.amazonaws.com/index.html).
+
+In this case study, the previous 12 months of trip data will be used
+which is from September 2021 until August 2022. Based on the ROCCC
+concept, which are reliable, original, comprehensive, current and cited,
+the datasets are considered unbias and has a good credibility. There is
+no standard station ID format but it does not bring any significant
+impact to this case study.
+
+-   **Reliable** - The source of the datasets are collected by DIVVY
+    bicycle sharing service, the location data can be plotted on the map
+    using Tableau / Power BI.
+
+-   **Original** - The datasets are collected by DIVVY bicycle sharing
+    service, an existing company and it is considered as a first-party
+    data source.
+
+-   **Comprehensive** - The datasets has the right data for the business
+    task.
+
+-   **Current** - The datasets are from recent dates (September 2021
+    until August 2022).
+
+-   **Cited** - The datasets are from DIVVY bicycle sharing service's
+    official website with provided license.
+
+## **Data Cleaning Process**
+
+The tools that are used during the data cleaning process are RStudio to
+produce a R markdown report and to remove any unnecessary data such as
+duplicate data and null data while Excel and Tableau are used for the
+purpose of data visualization.
+
+### **Importing Data**
+
+The following codes are used to import the 12 months of data from the
+spreadsheets into RStudio for data cleaning purposes.
+
+```{r , echo=TRUE, eval=FALSE}
+sep_2021 <- read.csv("202109-divvy-tripdata.csv")
+oct_2021 <- read.csv("202110-divvy-tripdata.csv")
+nov_2021 <- read.csv("202111-divvy-tripdata.csv")
+dec_2021 <- read.csv("202112-divvy-tripdata.csv")
+jan_2022 <- read.csv("202201-divvy-tripdata.csv")
+feb_2022 <- read.csv("202202-divvy-tripdata.csv")
+mar_2022 <- read.csv("202203-divvy-tripdata.csv")
+apr_2022 <- read.csv("202204-divvy-tripdata.csv")
+may_2022 <- read.csv("202205-divvy-tripdata.csv")
+jun_2022 <- read.csv("202206-divvy-tripdata.csv")
+jul_2022 <- read.csv("202207-divvy-tripdata.csv")
+aug_2022 <- read.csv("202208-divvy-tripdata.csv")
+
+```
+
+### **Merging datasets**
+
+The datasets are merged into a single file named all_trips.
+
+```{r , echo=TRUE, eval=FALSE}
+all_trips <- bind_rows(sep_2021, oct_2021, nov_2021, dec_2021, jan_2022, feb_2022, mar_2022, apr_2022, may_2022, jun_2022, jul_2022, aug_2022)
+```
+
+The total entries from September 2021 to August 2022 are 5,883,043
+entries.
+
+### **Data Cleaning Steps**
+
+Before proceeding towards analyzing the merged datasets, few cleaning
+steps are done to prevent errors such as blank rows and negative values.
+
+Using RStudio
+
+1.Remove redundant columns
+
+```{r , echo=TRUE, eval=FALSE}
+all_trips <- all_trips %>%
+  select(-c(start_lat, start_lng, end_lat, end_lng))
+
+```
+
+The number of columns reduces from 13 columns to 9 columns.
+
+2.Rename similar groups with different names
+
+```{r , echo=TRUE, eval=FALSE}
+all_trips <-  all_trips %>%
+  mutate(member_casual = recode(member_casual
+                                ,"Subscriber" = "member"
+                                ,"Customer" = "casual"))
+
+```
+
+Every entries that are named "Subscriber" are renamed as "member" and
+"Customer" as "casual".
+
+3.Date formatting
+
+```{r , echo=TRUE, eval=FALSE}
+all_trips$date <- as.Date(all_trips$started_at,"%d/%m/%Y") 
+all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")
+all_trips$month <- format(as.Date(all_trips$date), "%m")
+all_trips$day <- format(as.Date(all_trips$date), "%d")
+all_trips$year <- format(as.Date(all_trips$date), "%Y")
+```
+
+The number of columns increases from 9 columns to 14 columns.
+
+4.Convert ride_length into numeric format
+
+```{r , echo=TRUE, eval=FALSE}
+all_trips$ride_length <-  as.difftime(all_trips$ride_length, units = "secs")
+all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
+
+```
+
+Adding one more column to the dataset.
+
+5.Remove unwanted data (entries where the bikes are taken to maintenance
+or ride_length with negative values or rows with NA entries)
+
+```{r , echo=TRUE, eval=FALSE}
+all_trips_v2 <- all_trips[!(all_trips$start_station_name == "HQ QR" | all_trips$ride_length<0) ,]
+all_trips_v2 = subset(all_trips_v2, !is.na(ride_length))
+
+```
+
+The number of entries reduce from 5,883,043 to 5,882,926 entries.
+
+6.Remove empty entries at starting station and ending station columns
+
+```{r , echo=TRUE, eval=FALSE}
+trips_edited = subset(trips,!trips$start_station_name==""&trips$end_station_name=="")
+trips_edited1 = subset(trips, !trips$start_station_name=="")
+trips_edited2 = subset(trips, !trips$end_station_name=="")
+```
+
+This removes 1,322,862 entries which leaves a total of 4,560,064
+entries.
+
+## **Data Analysis**
+
+### **Results**
+
+1.Popular Stations
+
+From the data shown below, these stations are more popular stations as
+there are more users recorded in these stations.
+
+| Station Name                       | Number of Rides |
+|------------------------------------|-----------------|
+| Streeter Dr & Grand Ave            | 74,667          |
+| DuSable Lake Shore Dr & North Blvd | 40,856          |
+| DuSable Lake Shore Dr & Monroe St  | 40,545          |
+| Michigan Ave & Oak St              | 39,255          |
+| Wells St & Concord Ln              | 38,325          |
+| Clark St & Elm St                  | 35,486          |
+| Millennium Park                    | 35,474          |
+| Kingsbury St & Kinzie St           | 33,615          |
+| Theater on the Lake                | 33,124          |
+| Wells St & Elm St                  | 32,488          |
+
+: Most Popular Starting Stations
+
+![Most Popular Starting Stations](Popular%20Starting%20Stations2.png)
+
+| Station Name                       | Number of Rides |
+|------------------------------------|-----------------|
+| Streeter Dr & Grand Ave            | 76,186          |
+| DuSable Lake Shore Dr & North Blvd | 44,057          |
+| Michigan Ave & Oak St              | 40,143          |
+| DuSable Lake Shore Dr & Monroe St  | 39,687          |
+| Wells St & Concord Ln              | 38,317          |
+| Millennium Park                    | 36,430          |
+| Clark St & Elm St                  | 35,074          |
+| Theater on the Lake                | 33,548          |
+| Kingsbury St & Kinzie St           | 32,567          |
+| Wells St & Elm St                  | 31,638          |
+
+: Most Popular Ending Stations
+
+![Most Popular Ending Stations](Popular%20Ending%20Stations2.png)
+
+::: {#viz1664900583426 .tableauPlaceholder style="position: relative"}
+<noscript><a href='#'><img src="https://public.tableau.com/static/images/S3/S3QZBKXTZ/1_rss.png" alt="Sheet 1 " style="border: none"/></a></noscript>
+
+<object class="tableauViz" style="display:none;">
+
+<param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+<param name='embed_code_version' value='3' />
+<param name='path' value='shared&#47;S3QZBKXTZ' />
+<param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;S3&#47;S3QZBKXTZ&#47;1.png' />
+<param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='language' value='en-US' />
+
+</object>
+:::
+
+```{js, embedcode,echo=FALSE}
+var divElement = document.getElementById('viz1664900583426');                    var vizElement = divElement.getElementsByTagName('object')[0];                    vizElement.style.width='100%';vizElement.style.height=(divElement.offsetWidth*0.75)+'px';                    var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);
+
+```
+
+Some of the stations such as Streeter Dr & Grand Ave Station, Millennium
+Park Station, Theater on the Lake Station, DuSable Lake Shore Dr & North
+Blvd Station and DuSable Lake Shore Dr & Monroe St Station are built
+near tourist attraction such as Navy Pier or Millenium Park which will
+attract tourists and locals to ride along the harbour or coastline. In
+addition to that, there are multiple parks such as Olive Park, DuSable
+Park around the stations that encourages users to ride around with a
+bike.
+
+Other stations such as Michigan Ave & Oak St Station, Wells St & Concord
+Ln Staion, Clark St & Elm Station, Wells St & Elm St Station and
+Kingsbury St & Kinzie St Station are popular as there are no metro
+station near these station which encourages the people to move around
+with a bicycle in addition to the well structured bike lane around the
+area.
+
+2.Bike Types and Member Types
+
+| Riding Length (seconds) | Member | Casual |
+|-------------------------|--------|--------|
+| Max                     | 86,128 | 86,362 |
+| Min                     | 0      | 0      |
+| Mean                    | 752.2  | 1497   |
+| Median                  | 544    | 883    |
+
+: Riding Length Summary
+
+| Weekdays  | Member | Casual   |
+|-----------|--------|----------|
+| Sunday    | 753.48 | 1,511.60 |
+| Monday    | 749.93 | 1,478.62 |
+| Tuesday   | 756.26 | 1,518.30 |
+| Wednesday | 744.01 | 1,491.54 |
+| Thursday  | 751.01 | 1,501.01 |
+| Friday    | 755.38 | 1,473.85 |
+| Saturday  | 754.90 | 1,501.60 |
+
+: Average Ride Length (seconds) By Rider Type
+
+![Average Ride Length By Rider
+Type](Average%20Ride%20Length%20By%20Rider%20Type.png)
+
+From this summary, it would seem that the average casual riders (around
+25 mins) tend to rent the bikes longer than average member riders
+(around 13 mins). The median shows that most casual riders will rent
+bikes for around 15 mins while member riders will rent bikes for around
+10 mins. With this information, an average casual riders would yield \$5
+of profit per ride while an average member rider would yield \$119 of
+profit per annum. Besides that, the average ride length for the casual
+members are almost constant which shows that there are daily users in
+them.
+
+| Time             | Member  | Casual  | Total   |
+|------------------|---------|---------|---------|
+| 12 AM - 12:59 AM | 25,960  | 35,794  | 61,754  |
+| 1 AM - 1:59 AM   | 15,979  | 23,392  | 39,371  |
+| 2 AM - 2:59 AM   | 8,695   | 14,243  | 22,938  |
+| 3 AM - 3:59 AM   | 5,281   | 7,958   | 13,239  |
+| 4 AM - 4:59 AM   | 6,281   | 5,343   | 11,624  |
+| 5 AM - 5:59 AM   | 27,871  | 8,902   | 36,773  |
+| 6 AM - 6:59 AM   | 77,815  | 21,098  | 98,913  |
+| 7 AM - 7:59 AM   | 146,502 | 38,658  | 185,160 |
+| 8 AM - 8:59 AM   | 170,687 | 52,786  | 223,473 |
+| 9 AM - 9:59 AM   | 116,544 | 59,018  | 175,562 |
+| 10 AM - 10:59 AM | 108,671 | 79,318  | 187,989 |
+| 11 AM - 11:59 AM | 130,651 | 103,921 | 234,572 |
+| 12 PM - 12:59 PM | 148,869 | 120,372 | 269,241 |
+| 1 PM - 1:59 PM   | 145,254 | 125,462 | 270,716 |
+| 2 PM - 2:59 PM   | 144,306 | 130,692 | 274,998 |
+| 3 PM - 3:59 PM   | 173,410 | 142,501 | 315,911 |
+| 4 PM - 4:59 PM   | 235,372 | 158,528 | 393,900 |
+| 5 PM - 5:59 PM   | 289,099 | 180,414 | 469,513 |
+| 6 PM - 6:59 PM   | 232,708 | 161,330 | 394,038 |
+| 7 PM - 7:59 PM   | 164,314 | 122,754 | 287,068 |
+| 8 PM - 8:59 PM   | 113,347 | 88,816  | 202,163 |
+| 9 PM - 9:59 PM   | 86,956  | 76,141  | 163,097 |
+| 10 PM - 10:59 PM | 65,267  | 69,414  | 134,681 |
+| 11 PM - 11:59 PM | 42,272  | 51,098  | 93,370  |
+
+![Number of Rides For Each Time Period](Picture1.png)
+
+The amount of casual member is around 41.2% (1,877,953) of the overall
+number of rides which shows that converting them to annual member is a
+workable solution into increasing the profit of the company. Considering
+30% of the total users choose this service to commute to work everyday,
+it would be better to target this group of people that are currently not
+an annual member. The majority of the rides at 7 AM and 8 AM are from
+annual members which shows that they use this service to commute to work
+or study frequently. The percentage of casual members slowly increases
+after those period. The peak period of this bicycle service is at the
+time period around 5 to 6 PM with the most casual members of the day..
+
+| Bike Type     | Member    | Casual    | Total     |
+|---------------|-----------|-----------|-----------|
+| Classic Bike  | 1,862,776 | 1,027,997 | 2,890,773 |
+| Electric Bike | 819,335   | 644,184   | 1,463,519 |
+| Docked Bike   | 0         | 205,772   | 205,772   |
+| Total         | 2,682,111 | 1,877,953 | 4,560,064 |
+
+: Number of Rides Based on Different Bike Types and Member Types
+
+![Number of Rides for Each Bike Types and Member
+Types](Number%20of%20Riders%20for%20Each%20Bike%20Types%20and%20Member%20Types.png)
+
+Based on the above figure, docked bikes are not as popular as electric
+bike and classic bike. This is mainly caused by the limited docking
+stations available around Chicago. Docked bikes may not even be
+available during haevy traffic hours. In addition to that, it is not
+friendly to new cyclists as they are required to search a docking
+station in unfamiliar places which is better for them to pick a classic
+bike or an electric bike to move around.
+
+Electric bikes are better than docked bikes since it is easier to ride
+but it has similar problem to the docking stations which is the charging
+stations. The users will have to change batteries after it was depleted
+which requires them to search for its stations. Some users may
+experience renting a not fully charged electric bike.
+
+As an article posted on Streetsblog Chicago by Courtney Cobbson on May 5
+2022, 5 charging stations was set at the following locations, Wilton
+Avenue and Diversey Parkway, Lincoln Avenue and Roscoe Street, Bissell
+Street and Armitage Avenue, Green Street and Randolph Street, Morgan
+Street and Lake Street in order to charge the new e-bikes. This was done
+to prevent multiple trips to exchange the electric bikes' battery and to
+prevent any electric bikes that is not fully charged being rented by
+people.  
+
+![](FSA3VBRXoAE2L6X.png)
+
+Casual bikes are the most popular bikes among the three as the docking
+locations are very flexible, the users can dock their bikes any stations
+in Chicago and anywhere in the scooter zone for an extra charge of \$1
+for Divvy members and \$2 for non-members.
+![](Divvy_Scooter_Map_Update.png)
+
+| Weekdays  | **Members** | **Casual** |
+|-----------|-------------|------------|
+| Sunday    | 385,136     | 277,025    |
+| Monday    | 375,661     | 265,199    |
+| Tuesday   | 384,807     | 276,347    |
+| Wednesday | 375,945     | 250,975    |
+| Thursday  | 382,494     | 269,832    |
+| Friday    | 389,530     | 262,272    |
+| Saturday  | 388,538     | 276,303    |
+
+: Number of Rides By Member Types and Weekdays
+
+![Number of Rides By Member Type and
+Weekdays](Number%20of%20Rides%20By%20Rider%20Type.png)
+
+The number of riders shown for every different days are at a stable
+value, there is no drastic increase or decrease in values for each day.
+This shows that everyday bike riding is becoming a normal thing to the
+residents of Chicago. This also shows that these casual riders are
+similar to the annual riders that they ride bikes everyday for works and
+as a mean to move around in the city. The slight increase and decrease
+in riders can represent tourists that visits Chicago while the majority
+of the riders are locals.
+
+| Months         | Member  | Casual  |
+|----------------|---------|---------|
+| September 2021 | 328,205 | 292,930 |
+| October 2021   | 288,855 | 189,117 |
+| November 2021  | 185,909 | 69,958  |
+| December 2021  | 131,295 | 45,076  |
+| January 2022   | 67,523  | 12,605  |
+| February 2022  | 74,034  | 15,144  |
+| March 2022     | 148,827 | 67,154  |
+| April 2022     | 180,663 | 91,897  |
+| May 2022       | 282,299 | 220,246 |
+| June 2022      | 328,281 | 292,067 |
+| July 2022      | 330,996 | 311,670 |
+| August 2022    | 335,224 | 270,089 |
+
+![Number of Rides From September 2021 to August
+2022](Number%20of%20Rides%20From%20September%202021%20to%20August%202022.png)
+
+The number of rides for each month is shown in the figure above. The
+number of rides are at the lowest in January 2022, followed by February
+2022 and December 2021. This is due to different seasons that worsen the
+road condition and the drastic change in temperature which is not
+suitable for cycling. The following figure shows the temperature change
+in Fahrenheit for year 2021 and 2022.
+
+![Average High and Low
+Temperature](images/Average%20High%20and%20Low%20Temperature%20in%20Chicago.png)
+
+![Average Hourly Temperature in
+Chicago](images/Average%20Hourly%20Temperature%20in%20Chicago.png)
+
+As shown in the figure above, the average temperature at the month of
+January 2022 is in between 22 Fahrenheit to 33 Fahrenheit. This freezing
+temperature is not suitable for outdoor activity. So, the only users
+that are using this service at this month would be annual members for
+the purpose of travelling to work or study. This results in the low
+number of casual members because of the low temperature. In between June
+and September, the average temperature is suitable for outdoor activity
+which attracts tourists to come which is shown by the increase of casual
+members in number starting from May 2022.
+
+## **Solution**
+
+1.Increase the cost per minute for the single-ride pass by \$0.02
+
+The reason for this approach is to make the users think that applying
+the annual membership is a better decision. Even if they think
+otherwise, the increased price of the single-ride pass is still
+profitable to the company. By taking the average duration for a casual
+rider in the analysis section, the profit will increase from \$5 to
+\$5.5.
+
+2.Improve the advertisement for E-bike service
+
+The price for the E-bike service for annual member is the same as
+renting a casual bike as a casual member which is \$1 + \$0.16 / minute.
+They would consider to be a good deal when the comparison is made clear
+to them.
+
+3.Consider helmet renting service
+
+A helmet is a must to ride a bike for safety reason but it is not
+convenient to carry around a helmet when not riding a bike. With this
+service, people would feel more accessible to use this bike renting
+service especially when there is an emergency. It would be a plus if
+there is a small discount when the helmet is returned to the stations to
+prevent any loss helmet. An easier way to prevent helmet went lost is to
+pair each bike with their own helmets to track records.
+
+```{js ,include=FALSE}
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0px;"></div>
+```
